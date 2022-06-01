@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "module": "es2020",
+        "target": "es2017",
+        "declaration": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./dist/esm",
+        "paths": {
+            "@vvo/tzdb": [
+                "node_modules/@vvo/tzdb/dist/index"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@akiflow/timezones",
+  "version": "0.1.0",
+  "description": "Timezones module used across Akiflow products",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "repository": "git@github.com:akiflow/timezones.git",
+  "author": {
+    "name": "Akiflow Inc.",
+    "email": "developers@akiflow.com"
+  },
+  "keywords": [
+    "akiflow",
+    "timezones",
+    "time zones"
+  ],
+  "bugs": {
+    "url": "https://github.com/akiflow/timezones/issues"
+  },
+  "homepage": "https://github.com/akiflow/timezones#readme",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "prepublish": "npm run tsc"
+  },
+  "dependencies": {
+    "@vvo/tzdb": "^6.50.0",
+    "typescript": "^4.7.2"
+  },
+  "peerDependencies": {
+    "luxon": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/luxon": "^2.3.2",
+    "luxon": "^2.4.0"
+  }
+}
