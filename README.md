@@ -26,6 +26,9 @@ Timezones.instance.init()
 Timezones.instance.getTimezones()
 ```
 
+### Requirements
+- [luxon](https://github.com/moment/luxon/) >= 2.4.0
+
 ### Contributing
 Feel free to open an issue, if you find any.
 
