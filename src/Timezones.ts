@@ -91,12 +91,16 @@ export class Timezones {
         shortLabel,
         abbreviation,
         offset: tz.currentTimeOffsetInMinutes,
+        offsetString: `GMT${offsetHourString + offsetMinuteString}`,
         searchText: partsToSearch.join(' ').toLowerCase(),
         group: tz.group
       })
     })
   }
 
+  /**
+   * Returns the timezones list
+   */
   public getTimezones () {
     return this.timezones
   }
@@ -105,6 +109,9 @@ export class Timezones {
     return this.timezones.find((tz) => code === tz.code || tz.group.includes(code) || tz.code === timezoneAliases[code])
   }
 
+  /**
+   * Returns the timezones list as select options
+   */
   public getTimezoneOptions () {
     return this.timezones.map((timezone) => {
       return {
@@ -114,5 +121,20 @@ export class Timezones {
         searchText: timezone.searchText
       }
     })
+  }
+
+  /**
+   * Returns the system timezone code
+   */
+  public getSystemTimezoneCode () {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
+  }
+
+  /**
+   * Returns the system timezone from the timezones list
+   */
+  public getSystemTimezone () {
+    const systemTimezoneCode = this.getSystemTimezoneCode()
+    return this.timezones.find((tz) => tz.code === systemTimezoneCode || tz.group.includes(systemTimezoneCode) || tz.code === timezoneAliases[systemTimezoneCode])
   }
 }
