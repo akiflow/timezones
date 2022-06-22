@@ -73,5 +73,18 @@ export const timezoneAliases = {
   'US/Eastern': 'America/New_York',
   'US/Hawaii': 'Pacific/Honolulu',
   'US/Mountain': 'America/Denver',
-  'US/Pacific': 'America/Los_Angeles'
+  'US/Pacific': 'America/Los_Angeles',
+  Zulu: 'Etc/UTC',
+  // treat canonical time zones that observe other time zones, as aliases
+  CET: 'Europe/Paris',
+  CST6CDT: 'America/Chicago',
+  EET: 'Europe/Sofia',
+  EST: 'America/Cancun',
+  EST5EDT: 'America/New_York',
+  HST: 'Pacific/Honolulu',
+  MET: 'Europe/Paris',
+  MST: 'America/Phoenix',
+  MST7MDT: 'America/Denver',
+  PST8PDT: 'America/Los_Angeles',
+  WET: 'Europe/Lisbon',
 }
