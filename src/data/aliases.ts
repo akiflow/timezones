@@ -47,6 +47,7 @@ export const timezoneAliases = {
   'Etc/Universal': 'Etc/UTC',
   'Etc/Zulu': 'Etc/UTC',
   'Europe/Tiraspol': 'Europe/Chisinau',
+  'Europe/Kyiv': 'Europe/Kiev', // backwards compatibility
   GB: 'Europe/London',
   'GB-Eire': 'Europe/London',
   GMT: 'Etc/UTC',

@@ -1,12 +1,12 @@
-import { getTimeZones } from '@vvo/tzdb'
-import { getLocalizedDateTime } from './utils/date'
+import { getTimeZones, rawTimeZones, TimeZone } from '@vvo/tzdb'
+import { getLocalizedDateTime, getOffsetString } from './utils/date'
 import { abbreviations } from './data/abbreviations'
 import { timezoneAliases } from './data/aliases'
 
 export class Timezones {
   public static instance: Timezones
 
-  public static init () {
+  public static init() {
     if (!Timezones.instance) {
       Timezones.instance = new Timezones()
       Timezones.instance.processTimezones()
@@ -15,17 +15,16 @@ export class Timezones {
 
   private timezones = []
 
-  private getTimezoneList () {
+  private getTimezoneList() {
     const dbTimezones = getTimeZones({ includeUtc: true })
     return [
       ...dbTimezones,
+      ...this.generateMissingTimezones(dbTimezones),
       ...this.generateEtcTimezones()
-    ].sort((tzA, tzB) => {
-      return tzA.currentTimeOffsetInMinutes - tzB.currentTimeOffsetInMinutes
-    })
+    ].sort((tzA, tzB) => tzA.currentTimeOffsetInMinutes - tzB.currentTimeOffsetInMinutes)
   }
 
-  private generateEtcTimezones () {
+  private generateEtcTimezones() {
     const hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     return [...hours.concat(13, 14).map(hour => -hour), ...hours].map((hourOffset) => {
       const code = `Etc/GMT${hourOffset > 0 ? '+' : ''}${hourOffset}`
@@ -51,7 +50,37 @@ export class Timezones {
     })
   }
 
-  private processTimezones () {
+  private generateMissingTimezones(dbTimezones: TimeZone[]) {
+    const missingTimezones = []
+    const dbTimezoneByCode = dbTimezones.reduce((acc, tz) => {
+      acc[tz.name] = tz
+      return acc
+    }, {})
+    rawTimeZones.forEach((rawTimeZone) => {
+      if (!dbTimezoneByCode[rawTimeZone.name]) {
+        // missing timezone, attempt to find a backwards-compatible alias
+        const aliasTzCode = timezoneAliases[rawTimeZone.name]
+        if (aliasTzCode) {
+          try {
+            new Intl.DateTimeFormat('en-US', { timeZone: aliasTzCode })
+            const luxonDateTime = getLocalizedDateTime(new Date(), aliasTzCode)
+            const timeZone: Partial<TimeZone> = {
+              ...rawTimeZone,
+              currentTimeOffsetInMinutes: luxonDateTime.offset
+            }
+            const offsetInHours = getOffsetString(timeZone.currentTimeOffsetInMinutes)
+            timeZone.currentTimeFormat = `${offsetInHours.padStart(6, "+")} ${rawTimeZone.alternativeName} - ${rawTimeZone.mainCities.join(", ")}`
+            missingTimezones.push(timeZone)
+          } catch (_) {
+            console.log(`Missing timezone: ${rawTimeZone.name}`)
+          }
+        }
+      }
+    })
+    return missingTimezones
+  }
+
+  private processTimezones() {
     return this.getTimezoneList().forEach((tz) => {
       const luxonDateTime = getLocalizedDateTime(new Date(), tz.name)
       const isInDST = luxonDateTime.isInDST
@@ -101,18 +130,18 @@ export class Timezones {
   /**
    * Returns the timezones list
    */
-  public getTimezones () {
+  public getTimezones() {
     return this.timezones
   }
 
-  public getTimezoneByCode (code: string) {
+  public getTimezoneByCode(code: string) {
     return this.timezones.find((tz) => code === tz.code || tz.group.includes(code) || tz.code === timezoneAliases[code])
   }
 
   /**
    * Returns the timezones list as select options
    */
-  public getTimezoneOptions () {
+  public getTimezoneOptions() {
     return this.timezones.map((timezone) => {
       return {
         id: timezone.code,
@@ -126,14 +155,14 @@ export class Timezones {
   /**
    * Returns the system timezone code
    */
-  public getSystemTimezoneCode () {
+  public getSystemTimezoneCode() {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
   }
 
   /**
    * Returns the system timezone from the timezones list
    */
-  public getSystemTimezone () {
+  public getSystemTimezone() {
     const systemTimezoneCode = this.getSystemTimezoneCode()
     return this.timezones.find((tz) => tz.code === systemTimezoneCode || tz.group.includes(systemTimezoneCode) || tz.code === timezoneAliases[systemTimezoneCode])
   }
