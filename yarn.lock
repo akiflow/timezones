@@ -7,17 +7,17 @@
   resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-2.3.2.tgz#8a3f2cdd4858ce698b56cd8597d9243b8e9d3c65"
   integrity sha512-WOehptuhKIXukSUUkRgGbj2c997Uv/iUgYgII8U7XLJqq9W2oF0kQ6frEznRQbdurioz+L/cdaIm4GutTQfgmA==
 
-"@vvo/tzdb@^6.50.0":
-  version "6.50.0"
-  resolved "https://registry.yarnpkg.com/@vvo/tzdb/-/tzdb-6.50.0.tgz#d5d9ad9294879bc5c299e511d5f354bcc70e4b4c"
-  integrity sha512-Qhz+bCCIO8OhriKIhCJ4EHYRiZliY1gmitIxcxgFO4VGOujKG5WWQUs6ecIXBbF0YRYnkbG97TTE6A8uu2f8cg==
+"@vvo/tzdb@^6.73.0":
+  version "6.73.0"
+  resolved "https://registry.yarnpkg.com/@vvo/tzdb/-/tzdb-6.73.0.tgz#d2e197995c61f66d7a6add241ceb665dcab63024"
+  integrity sha512-CeZZvpOjmkfFPxtYvQe6+M02WPhYNIBAByxtVju9k8DOfZnEmoKtY7jevkqvd8zQGYmSs8CvH08JD+rymu1Glg==
 
 luxon@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-2.4.0.tgz#9435806545bb32d4234dab766ab8a3d54847a765"
   integrity sha512-w+NAwWOUL5hO0SgwOHsMBAmZ15SoknmQXhSO0hIbJCAmPKSsGeK8MlmhYh2w6Iib38IxN2M+/ooXWLbeis7GuA==
 
-typescript@^4.7.2:
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.2.tgz#1f9aa2ceb9af87cca227813b4310fff0b51593c4"
-  integrity sha512-Mamb1iX2FDUpcTRzltPxgWMKy3fhg0TN378ylbktPGPK/99KbDtMQ4W1hwgsbPAsG3a0xKa1vmw4VKZQbkvz5A==
+typescript@^4.8.4:
+  version "4.8.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.4.tgz#c464abca159669597be5f96b8943500b238e60e6"
+  integrity sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==
