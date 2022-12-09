@@ -90,10 +90,12 @@ export class Timezones {
       const abbreviation = (isInDST && dstAbbreviation) || defaultAbbreviation
       // generate labels
       let label = `(GMT${tz.currentTimeFormat.slice(0, 6)}) ${tz.alternativeName}`
-      const offsetHour = tz.currentTimeOffsetInMinutes / 60
-      const offsetHourString = offsetHour > 0 ? `+${Math.floor(offsetHour)}` : `${Math.floor(offsetHour)}`
-      const offsetMinute = tz.currentTimeOffsetInMinutes % 60
-      const offsetMinuteString = offsetMinute > 0 ? `:${offsetMinute}` : ''
+      const offsetSign = tz.currentTimeOffsetInMinutes >= 0 ? '+' : '-'
+      const absCurrentTimeOffsetInMinutes = Math.abs(tz.currentTimeOffsetInMinutes)
+      const absOffsetHour = absCurrentTimeOffsetInMinutes / 60
+      const offsetHourString = `${offsetSign}${Math.floor(absOffsetHour)}`
+      const absOffsetMinute = absCurrentTimeOffsetInMinutes % 60
+      const offsetMinuteString = absOffsetMinute > 0 ? `:${absOffsetMinute}` : ''
       let shortLabel = `(GMT${offsetHourString + offsetMinuteString}) ${tz.alternativeName}`
       if (tz.mainCities.filter(Boolean).length > 0) {
         label += ` - ${tz.mainCities.slice(0, 2).join(', ')}`
