@@ -123,6 +123,7 @@ export class Timezones {
         abbreviation,
         offset: tz.currentTimeOffsetInMinutes,
         offsetString: `GMT${offsetHourString + offsetMinuteString}`,
+        countryCode: tz.countryCode || null,
         searchText: partsToSearch.join(' ').toLowerCase(),
         group: tz.group
       })
