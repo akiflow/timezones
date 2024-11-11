@@ -3,6 +3,28 @@ import { getLocalizedDateTime, getOffsetString } from './utils/date'
 import { abbreviations } from './data/abbreviations'
 import { timezoneAliases } from './data/aliases'
 
+const getUserCountryCode = (): string => {
+  if (typeof navigator === 'undefined' || !navigator) {
+    return ''
+  }
+  const locale = navigator.language || navigator.languages?.[0]
+  return locale?.split('-')?.[1]?.toUpperCase() || ''
+}
+
+const isUnknownTimeZone = (tzCode: string) => !tzCode || tzCode === 'Etc/Unknown' 
+
+interface ITimezone {
+  code: string
+  label: string
+  shortLabel: string
+  abbreviation: string
+  offset: number
+  offsetString: string
+  countryCode: string | null
+  searchText: string
+  group: string[]
+}
+
 export class Timezones {
   public static instance: Timezones
 
@@ -13,9 +35,9 @@ export class Timezones {
     }
   }
 
-  private timezones = []
+  private timezones: ITimezone[] = []
 
-  private getTimezoneList() {
+  private getTimezoneList(): Array<TimeZone> {
     const dbTimezones = getTimeZones({ includeUtc: true })
     return [
       ...dbTimezones,
@@ -24,7 +46,7 @@ export class Timezones {
     ].sort((tzA, tzB) => tzA.currentTimeOffsetInMinutes - tzB.currentTimeOffsetInMinutes)
   }
 
-  private generateEtcTimezones() {
+  private generateEtcTimezones(): Array<TimeZone> {
     const hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     return [...hours.concat(13, 14).map(hour => -hour), ...hours].map((hourOffset) => {
       const code = `Etc/GMT${hourOffset > 0 ? '+' : ''}${hourOffset}`
@@ -50,7 +72,7 @@ export class Timezones {
     })
   }
 
-  private generateMissingTimezones(dbTimezones: TimeZone[]) {
+  private generateMissingTimezones(dbTimezones: Array<TimeZone>): Array<TimeZone> {
     const missingTimezones = []
     const dbTimezoneByCode = dbTimezones.reduce((acc, tz) => {
       acc[tz.name] = tz
@@ -80,7 +102,7 @@ export class Timezones {
     return missingTimezones
   }
 
-  private processTimezones() {
+  private processTimezones(): void {
     return this.getTimezoneList().forEach((tz) => {
       const luxonDateTime = getLocalizedDateTime(new Date(), tz.name)
       const isInDST = luxonDateTime.isInDST
@@ -159,7 +181,54 @@ export class Timezones {
    * Returns the system timezone code
    */
   public getSystemTimezoneCode() {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone
+    let tzCode: string
+    if (typeof Intl === 'object' && !!Intl && typeof Intl.DateTimeFormat === 'function') {
+      tzCode = Intl.DateTimeFormat().resolvedOptions().timeZone
+    }
+    if (isUnknownTimeZone(tzCode)) {
+      const dateRef = new Date()
+      const userCountryCode = getUserCountryCode()
+      const shortTimezoneName = dateRef
+        .toLocaleString('en', { day: 'numeric', timeZoneName: 'shortGeneric' })
+        .replace(`${dateRef.getDate()}, `, '')
+      const longTimezoneName = dateRef
+        .toLocaleString('en', { day: 'numeric', timeZoneName: 'longGeneric' })
+        .replace(`${dateRef.getDate()}, `, '')
+      const sameOffsetTimezones = this.getTimezones()
+        .filter(tz => tz.offset === -dateRef.getTimezoneOffset())
+        .sort((tzA, tzB) =>{
+          if (!userCountryCode) {
+            return 0
+          }
+          const tzACountryCode = tzA.countryCode || ''
+          const tzBCountryCode = tzB.countryCode || ''
+          if (tzACountryCode === userCountryCode) {
+            return -1
+          }
+          if (tzBCountryCode === userCountryCode) {
+            return 1
+          }
+          return 0
+        })
+      if (!sameOffsetTimezones.length) {
+        return tzCode
+      }
+      const searchPatterns: Array<(tz: ITimezone) => boolean> = [
+        (tz) => tz.label.toLowerCase().includes(shortTimezoneName.toLowerCase()),
+        (tz) => tz.searchText.toLowerCase().includes(shortTimezoneName.replace(/(\s+)?time(\s+)?/i, '').toLowerCase()),
+        (tz) => tz.label.toLowerCase().includes(longTimezoneName.toLowerCase()),
+        (tz) => tz.searchText.toLowerCase().includes(longTimezoneName.replace(/(\s+)?time(\s+)?/i, '').toLowerCase()),
+      ]
+      for (const pattern of searchPatterns) {
+        const matches = sameOffsetTimezones.filter(pattern).sort((tzA, tzB) => tzB.group.length > tzA.group.length ? 1 : -1)
+        const foundTzCode = matches.length > 0 ? matches[0].code : ''
+        if (!isUnknownTimeZone(foundTzCode)) {
+          tzCode = foundTzCode
+          break
+        }
+      }
+    }
+    return tzCode
   }
 
   /**
