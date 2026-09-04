@@ -1,6 +1,6 @@
 {
   "name": "@akiflow/timezones",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Timezones module used across Akiflow products",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -29,14 +29,14 @@
     "prepare": "npm run tsc"
   },
   "dependencies": {
-    "@vvo/tzdb": "^6.119.0",
-    "typescript": "^5.3.3"
+    "@vvo/tzdb": "^6.119.0"
   },
   "peerDependencies": {
-    "luxon": "^2.4.0"
+    "luxon": "^2.4.0 || ^3.0.0"
   },
   "devDependencies": {
     "@types/luxon": "^3.3.7",
-    "luxon": "^3.4.4"
+    "luxon": "^3.4.4",
+    "typescript": "^5.3.3"
   }
 }
